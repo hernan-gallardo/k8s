@@ -14,49 +14,68 @@
 #
 
 
-apiVersion: portal.apiconnect.ibm.com/v1beta1
-kind: PortalCluster
+apiVersion: management.apiconnect.ibm.com/v1beta1
+kind: ManagementCluster
 metadata:
-  name: portal
+  name: management
   labels: {
-    app.kubernetes.io/instance: "portal",
+    app.kubernetes.io/instance: "management",
     app.kubernetes.io/managed-by: "ibm-apiconnect",
-    app.kubernetes.io/name: "portal"
+    app.kubernetes.io/name: "management"
   }
 spec:
   version: 10.0.2.0
-  profile: n1xc2.m8
   imagePullSecrets:
-    - apic-registry-secret
+  - apic-registry-secret
   imageRegistry: 192.168.43.188:5000
-  portalAdminEndpoint:
+  profile: n1xc4.m16
+  portal:
+    admin:
+      secretName: portal-admin-client
+  analytics:
+    client:
+      secretName: analytics-client-client
+    ingestion:
+      secretName: analytics-ingestion-client
+  gateway:
+    client:
+      secretName: gateway-client-client
+  cloudManagerEndpoint:
     annotations:
       certmanager.k8s.io/issuer: ingress-issuer
-    hosts:
-    - name: api.portal.apiconnect.apic.lab
-      secretName: portal-admin
-  portalUIEndpoint:
+    hosts: 
+    - name: admin.apic.lab
+      secretName: cm-endpoint
+  apiManagerEndpoint:
     annotations:
       certmanager.k8s.io/issuer: ingress-issuer
-    hosts:
-    - name: portal.apiconnect.apic.lab
-      secretName: portal-web
+    hosts: 
+    - name: manager.apic.lab
+      secretName: apim-endpoint
+  platformAPIEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts: 
+    - name: api.apic.lab
+      secretName: api-endpoint
+  consumerAPIEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts: 
+    - name: consumer.apic.lab
+      secretName: consumer-endpoint
   databaseVolumeClaimTemplate:
     storageClassName: rook-ceph-block
     volumeSize: 120Gi
-  databaseLogsVolumeClaimTemplate:
+  dbBackupVolumeClaimTemplate:
     storageClassName: rook-ceph-block
-    volumeSize: 12Gi
-  webVolumeClaimTemplate:
+    volumeSize: 120Gi
+  dbArchiveVolumeClaimTemplate:
     storageClassName: rook-ceph-block
-    volumeSize: 200Gi
-  backupVolumeClaimTemplate:
+    volumeSize: 30Gi
+  messageQueueVolumeClaimTemplate:
     storageClassName: rook-ceph-block
-    volumeSize: 300Gi
-  adminVolumeClaimTemplate:
-    storageClassName: rook-ceph-block
-    volumeSize: 20Gi
-  adminClientSubjectDN: CN=portal-admin-client,O=cert-manager
+    volumeSize: 10Gi
   microServiceSecurity: certManager
   certManagerIssuer:
     name: selfsigning-issuer
@@ -65,3 +84,5 @@ spec:
     accept: true
     use: nonproduction
     license: 'L-RJON-BZ5LJ5'
+  nodeSelector:
+    nodegroup-type: management

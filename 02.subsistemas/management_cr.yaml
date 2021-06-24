@@ -65,7 +65,17 @@ spec:
     - name: consumer.apic.lab
       secretName: consumer-endpoint
   databaseVolumeClaimTemplate:
-    storageClassName: myblock
+    storageClassName: rook-ceph-block
+    volumeSize: 120Gi
+  dbBackupVolumeClaimTemplate:
+    storageClassName: rook-ceph-block
+    volumeSize: 120Gi
+  dbArchiveVolumeClaimTemplate:
+    storageClassName: rook-ceph-block
+    volumeSize: 30Gi
+  messageQueueVolumeClaimTemplate:
+    storageClassName: rook-ceph-block
+    volumeSize: 10Gi
   microServiceSecurity: certManager
   certManagerIssuer:
     name: selfsigning-issuer

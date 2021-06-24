@@ -17,13 +17,15 @@
 apiVersion: portal.apiconnect.ibm.com/v1beta1
 kind: PortalCluster
 metadata:
-  name: portal
+  name: portal-np
   labels: {
     app.kubernetes.io/instance: "portal",
     app.kubernetes.io/managed-by: "ibm-apiconnect",
     app.kubernetes.io/name: "portal"
   }
 spec:
+  nodeSelector:
+    nodegroup-type: runtime-prd
   version: 10.0.2.0
   profile: n1xc2.m8
   imagePullSecrets:
@@ -33,13 +35,13 @@ spec:
     annotations:
       certmanager.k8s.io/issuer: ingress-issuer
     hosts:
-    - name: api.portal.apiconnect.apic.lab
+    - name: api.portal-np.apic.lab
       secretName: portal-admin
   portalUIEndpoint:
     annotations:
       certmanager.k8s.io/issuer: ingress-issuer
     hosts:
-    - name: portal.apiconnect.apic.lab
+    - name: portal-np.apic.lab
       secretName: portal-web
   databaseVolumeClaimTemplate:
     storageClassName: rook-ceph-block
