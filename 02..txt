@@ -1,0 +1,473 @@
+####################################
+## CONFIGURACIÓN DEL CLÚSTER K8S: ##
+####################################
+
+
+1) En la máquina cliente, desde donde se realizarán los trabajos, haga lo siguiente:
+
+	OBS: Si no cuenta con un cliente Linux, use el master01 para ello.
+
+	Installing cfssl
+		1.1) Download the binaries.
+
+		$ wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64
+		$ wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64
+		
+		Si no es posible descargarlos en los nodos, descargar en otra máquina y copiar manualmente. 
+		
+		1.2) Add the execution permission to the binaries.
+
+		$ chmod +x cfssl*
+
+		1.3) Move the binaries to /usr/local/bin.
+
+		$ sudo mv cfssl_linux-amd64 /usr/local/bin/cfssl
+		$ sudo mv cfssljson_linux-amd64 /usr/local/bin/cfssljson
+		
+		1.4) Verify the installation.
+
+		$ cfssl version
+
+	Installing kubectl
+		1.5) Download the binary.
+
+		$wget https://storage.googleapis.com/kubernetes-release/release/v1.20.4/bin/linux/amd64/kubectl
+		
+		1.6) Add the execution permission to the binary.
+
+		$chmod +x kubectl
+		
+		1.7) Move the binary to /usr/local/bin.
+
+		$sudo mv kubectl /usr/local/bin
+		
+		1.8) Verify the installation.
+
+		$ kubectl version
+
+	Generating the TLS certificates
+		These steps can be done on your Linux desktop if you have one or on the HAProxy machine depending on where you installed the cfssl tool.
+
+		Creating a certificate authority
+		1.9) Create the certificate authority configuration file.
+		$ vim ca-config.json
+{
+  "signing": {
+    "default": {
+      "expiry": "8760h"
+    },
+    "profiles": {
+      "kubernetes": {
+        "usages": ["signing", "key encipherment", "server auth", "client auth"],
+        "expiry": "8760h"
+      }
+    }
+  }
+}
+
+		1.10) Create the certificate authority signing request configuration file.
+
+		$ vim ca-csr.json
+{
+  "CN": "Kubernetes",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+  {
+    "C": "IE",
+    "L": "Cork",
+    "O": "Kubernetes",
+    "OU": "CA",
+    "ST": "Cork Co."
+  }
+ ]
+}
+
+		1.11) Generate the certificate authority certificate and private key.
+
+		$ cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+
+		1.12) Verify that the ca-key.pem and the ca.pem were generated.
+
+		$ ls -la
+
+	Creating the certificate for the Etcd cluster
+		1.13) Create the certificate signing request configuration file.
+
+		$ vim kubernetes-csr.json
+{
+  "CN": "kubernetes",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+  {
+    "C": "IE",
+    "L": "Cork",
+    "O": "Kubernetes",
+    "OU": "Kubernetes",
+    "ST": "Cork Co."
+  }
+ ]
+}
+
+		1.14) Generate the certificate and private key.
+
+$ cfssl gencert \
+-ca=ca.pem \
+-ca-key=ca-key.pem \
+-config=ca-config.json \
+-hostname=IP-master01,IP-master02,IP-master03,127.0.0.1,kubernetes.default \
+-profile=kubernetes kubernetes-csr.json | \
+cfssljson -bare kubernetes
+
+		1.15) Verify that the kubernetes-key.pem and the kubernetes.pem file were generated.
+
+		$ ls -la
+
+		1.16) Copy the certificate to each nodes (masters).
+
+		$ scp ca.pem kubernetes.pem kubernetes-key.pem root@IP-master01:~
+		$ scp ca.pem kubernetes.pem kubernetes-key.pem root@IP-master02:~
+		$ scp ca.pem kubernetes.pem kubernetes-key.pem root@IP-master03:~
+
+		
+		1.17) Abra en los master los puertos utilizados por Kubernetes:
+
+		firewall-cmd --zone=public --permanent --add-port={6443,2379,2380,10250,10251,10252,10255}/tcp
+		
+		
+		1.18) Permita el acceso de Docker desde otro nodo, reemplace la dirección IP por la de los workers y los otros master en el sgte comando:
+
+		firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=worker-IP-address/32 accept'
+
+	
+		1.19) Permita el acceso localhost desde docker:
+
+		firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=172.17.0.1/16 accept'
+
+	
+		1.20) Haga permanentes los cambios:
+
+		firewall-cmd --reload
+
+	
+2) INSTALE Y CONFIGURE ETCD:
+
+	Instale y configure Etcd en los 3 nodos Master (repita los pasos en los 3 master)
+
+	2.1) Acceda a cada master y cree los siguientes directorios:
+	
+		sudo rm -rf /etc/etcd /var/lib/etcd (esta línea solo si es necesario borrar)
+		sudo mkdir /etc/etcd /var/lib/etcd
+		
+	2.2) Mueva los certificados al directorio de configuración:
+		
+		sudo mv ~/ca.pem ~/kubernetes.pem ~/kubernetes-key.pem /etc/etcd
+
+		
+	2.3) Descargue Etcd en cada master (Si no tiene acceso, descárguelo en otro equipo y luego copiar):
+	
+		wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.3.13-linux-amd64.tar.gz
+		
+	2.4) Extraiga el contenido del archivo descargado:
+	
+		tar xvzf etcd-v3.4.13-linux-amd64.tar.gz
+	
+	2.5) Ejecute lo siguiente para mover los archivos etcd*:
+	
+		sudo mv etcd-v3.4.13-linux-amd64/etcd* /usr/local/bin/
+		rm -rf etcd-v3.4.13-linux-amd64/
+	
+	2.6) Cree el archivo etcd.service y configurarlo de acuerdo a los parámetros del clúster:
+	
+		sudo vim /etc/systemd/system/etcd.service
+		
+## Contenido del archivo (reemplazar las IP y masterXX por lo que corresponda dependiendo del master al cual corresponde el archivo):
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos
+
+
+[Service]
+ExecStart=/usr/local/bin/etcd \
+  --name master01 \ ##reemplace por el  master respectivo
+  --cert-file=/etc/etcd/kubernetes.pem \
+  --key-file=/etc/etcd/kubernetes-key.pem \
+  --peer-cert-file=/etc/etcd/kubernetes.pem \
+  --peer-key-file=/etc/etcd/kubernetes-key.pem \
+  --trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-client-cert-auth \
+  --client-cert-auth \
+  --initial-advertise-peer-urls https://192.168.43.140:2380 \
+  --listen-peer-urls https://192.168.43.140:2380 \
+  --listen-client-urls https://192.168.43.140:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls https://192.168.43.140:2379 \
+  --initial-cluster-token etcd-cluster-0 \
+  --initial-cluster master01=https://192.168.43.140:2380,master02=https://192.168.43.139,master03=https://192.168.43.189:2380 \
+  --initial-cluster-state new \
+  --data-dir=/var/lib/etcd
+Restart=on-failure
+RestartSec=5
+
+
+
+[Install]
+WantedBy=multi-user.target
+		
+		
+	2.7) Reload el daemon configuration.
+		
+		sudo systemctl daemon-reload
+
+		
+	2.8) Habilite Etcd para que inicie al arranque y luego inicie el servicio:
+	
+		sudo systemctl enable etcd
+		sudo systemctl start etcd
+		
+	2.9) Verifique que el clúster Etcd está en funcionamiento:
+		
+		ETCDCTL_API=3 etcdctl member list
+		
+		Debe ver una salida como la siguiente:
+		575318fc33aad514, started, master02, https://192.168.43.139:2380, https://192.168.43.139:2379, false
+		685c91b86ee8f68e, started, master03, https://192.168.43.148:2380, https://192.168.43.148:2379, false
+		ba6e8aa5bb37235d, started, master01, https://192.168.43.140:2380, https://192.168.43.140:2379, false
+
+		
+		
+3) INICIALICE LOS NODOS MAESTROS:
+
+	Ejecute los siguientes pasos en el master01.
+
+	3.1) Acceda al master y cree el archivo de configuración "config.yaml" para kubeadm con el siguiente contenido:
+
+	vim config.yaml
+
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+clusterName: "apic-cluster"
+kubernetesVersion: "v1.21.1"
+controlPlaneEndpoint: "192.168.43.140:6443" ## Si se asigna una VIP, aqui va esa IP, no la del master01
+etcd:
+  external:
+    endpoints:
+    - "https://192.168.43.140:2379"
+    - "https://192.168.43.139:2379"
+    - "https://192.168.43.148:2379"
+    caFile: "/etc/etcd/ca.pem"
+    certFile: "/etc/etcd/kubernetes.pem"
+    keyFile: "/etc/etcd/kubernetes-key.pem"
+networking:
+  dnsDomain: cluster.local
+  podSubnet: "172.17.0.1/16"
+apiServer:
+  extraArgs:
+    authorization-mode: "Node,RBAC"
+    apiserver-count: "3"
+  certSANs:
+  - "192.168.43.140"
+  - "192.168.43.139"
+  - "192.168.43.148"
+  
+	3.2) Inicialice la máquina como nodo maestro:
+	
+		sudo kubeadm init --config=config.yaml
+		
+	3.3) Para comenzar a usar su clúster (usar kubectl), debe ejecutar lo siguiente si no trabaja con la cuenta root:
+	
+		  mkdir -p $HOME/.kube
+		  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+		  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+	
+		Alternativamente, si es el usuario root, puede ejecutar:
+	
+		export KUBECONFIG=/etc/kubernetes/admin.conf
+
+	3.4) Compruebe que el Master se haya habilitado y se esté ejecutando.
+
+		kubectl get nodes
+		
+		El resultado será como el siguiente:
+		
+		NAME                STATUS     ROLES                  AGE   VERSION
+		master01.apic.lab   NotReady   control-plane,master   13m   v1.20.4
+
+		OBS: Como aún no se instala calico, el estado es NotReady
+	
+		Además, puede verificar el token creado con el comando:
+		
+		kubeadm token list
+		
+		Si requiere borrar un token, hagalo con: "kubeadm token delete [token-value]"
+	
+	
+	3.5) Copie los certificados, desde el master01, a los otros dos master:
+
+		sudo scp -r /etc/kubernetes/pki root@IP-master02:~
+		sudo scp -r /etc/kubernetes/pki root@IP-master03:~
+
+	3.6) En los master 2 y 3 ejecute el siguiente comando para remover los archivos apiserver.crt y apiserver.key: 
+	
+		rm ~/pki/apiserver.*
+		
+		OBS.: Responda "y" para cada archivo a eliminar
+		
+		
+	3.7) Mueva los certificados a la carpeta /etc/kubernetes (en cada master):
+	
+		sudo mv ~/pki /etc/kubernetes/
+	
+	3.8) Cree el archivo de configuración config.yaml para los master 2 y 3 (en cada master):
+			
+	3.9) Inicialice la máquina como nodo maestro:
+	
+		sudo kubeadm init --config=config.yaml
+
+	3.10) Ejecute el comando: export KUBECONFIG=/etc/kubernetes/admin.conf
+
+	3.11) Compruebe que el nuevo master se haya habilitado y se esté ejecutando.
+
+		kubectl get nodes
+		
+		El resultado será como el siguiente una vez haya agregado los 3 master:
+		
+		NAME                STATUS     ROLES                  AGE   VERSION
+		master01.apic.lab   NotReady   control-plane,master   13m   v1.20.4
+		master02.apic.lab   NotReady   control-plane,master   9m14s   v1.20.4
+		master03.apic.lab   NotReady   control-plane,master   2m12s   v1.20.4
+	
+		Si ejecuta kubeadm token list, debiese ver 3 tokens:
+		
+		TOKEN                     TTL         EXPIRES                     USAGES                   DESCRIPTION                                                EXTRA GROUPS
+		bg3o5w.992xwi1kryild88v   23h         2021-05-19T15:30:52-04:00   authentication,signing   <none>                                                     system:bootstrappers:kubeadm:default-node-token
+		ke9nl6.hlrs4avqx21jothv   23h         2021-05-19T16:01:46-04:00   authentication,signing   <none>                                                     system:bootstrappers:kubeadm:default-node-token
+		s1caf9.nqbh729uxtjjhrc6   23h         2021-05-19T15:54:42-04:00   authentication,signing   <none>                                                     system:bootstrappers:kubeadm:default-node-token
+		
+	3.12) Guarde los comandos kubeadm join que entrega la salida "sudo kubeadm init --config=config.yaml" de cada master
+	
+		Si llega a perder esta información, puede listar los tokens y usarlos en el siguiente para agregar workers al clúster:
+		
+		sudo kubeadm join 192.168.43.140:6443 --token [your_token] --discovery-token-ca-cert-hash sha256:[your_token_ca_cert_hash]
+		
+	3.13) Para ver la configuración del clúster, si lo desea, ejecute el comando:
+
+		kubectl -n kube-system get cm kubeadm-config -o yaml
+
+	
+		
+
+4) AGREGUE LOS NODOS WORKER AL CLÚSTER:
+
+	5.1) En cada nodo Worker, ejecute el siguiente comando obtenido desde el master01 en el paso 3.2 (reemplazar la IP por la del master):
+	
+		kubeadm join 192.168.43.140:6443 --token yt4afi.t6r951286pkjbelw \
+		--discovery-token-ca-cert-hash sha256:567324348f883080d018c885899fd131de096315196fd6227c0fab73033e7c28
+	
+	5.2) Verifique desde alguno de los master que se hayan agregado correctamente los workers:
+
+		kubectl get nodes
+		
+		
+		El resultado del comando anterior debe ser similar al siguiente:
+		
+		NAME                STATUS   	ROLES                  AGE     VERSION
+		master01.apic.lab   NotReady    control-plane,master   87m     v1.20.4
+		master02.apic.lab   NotReady    control-plane,master   51m     v1.20.4
+		master03.apic.lab   NotReady    control-plane,master   44m     v1.20.4
+		minion01.apic.lab   NotReady    <none>                 4m28s   v1.20.4
+		minion02.apic.lab   NotReady    <none>                 3m54s   v1.20.4
+		minion03.apic.lab   NotReady    <none>                 3m32s   v1.20.4
+		minion04.apic.lab   NotReady    <none>                 3m20s   v1.20.4
+		minion05.apic.lab   NotReady    <none>                 3m6s    v1.20.4
+		minion06.apic.lab   NotReady    <none>                 2m53s   v1.20.4
+	
+
+5) INSTALE CALICO (desde el cliente o master01):
+
+	Calico es un CNI (container network interface). Para que los nodos comiencen a aparecer en estado Ready, debe instalar calico para generar una red superpuesta para el cluster (overlay network).
+
+	5.1) Descargue calico con el siguiente comando:
+
+		wget https://docs.projectcalico.org/manifests/calico.yaml
+	
+		OBS: Si no descarga, hágalo desde otra máquina y luego lo copia.
+	
+	5.2) Edite el archivo calico.yaml para cambiar la red de pods y que coincida con la del cluster: "172.17.0.1/16"
+	
+		OBS: Se debe cambiar el valor de la etiqueta con nombre CALICO_IPV4POOL_CIDR. Si las líneas están comentadas, se debe descomentar.
+	
+	5.3) Ejecute el siguiente comando para instalar calico:
+	
+		kubectl apply -f calico.yaml
+	
+	5.4) Verifique que los nodos están en estado ready:
+	
+		kubectl get nodes
+	
+		Debe ver el siguiente resultado:
+		NAME                STATUS   ROLES                  AGE   VERSION
+		master01.apic.lab   Ready    control-plane,master   75m   v1.20.4
+		master02.apic.lab   Ready    control-plane,master   39m   v1.20.4
+		master03.apic.lab   Ready    control-plane,master   32m   v1.20.4
+		minion01.apic.lab   Ready    <none>                 4m28s   v1.20.4
+		minion02.apic.lab   Ready    <none>                 3m54s   v1.20.4
+		minion03.apic.lab   Ready    <none>                 3m32s   v1.20.4
+		minion04.apic.lab   Ready    <none>                 3m20s   v1.20.4
+		minion05.apic.lab   Ready    <none>                 3m6s    v1.20.4
+		minion06.apic.lab   Ready    <none>                 2m53s   v1.20.4
+	
+	5.5) Al ejecutar el siguiente comando, debería ver todos los Pods creados (algunos pueden demorar unos minutos en quedar en estado Running):
+	
+		kubectl get pods -n kube-system
+		
+		El siguiente resultado muestra los Pods para un clúster de 3 masters y 6 workers:
+		
+			NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
+			kube-system   calico-kube-controllers-6d7b4db76c-96rk7    1/1     Running   0          2m46s
+			kube-system   calico-node-54gtd                           1/1     Running   0          2m46s
+			kube-system   calico-node-bjtt8                           1/1     Running   0          2m46s
+			kube-system   calico-node-bsmcd                           1/1     Running   0          2m46s
+			kube-system   calico-node-m7nsv                           1/1     Running   0          2m46s
+			kube-system   calico-node-nfgzn                           1/1     Running   0          2m46s
+			kube-system   calico-node-qq26f                           1/1     Running   0          2m46s
+			kube-system   calico-node-tbprz                           1/1     Running   0          2m46s
+			kube-system   calico-node-x94k2                           1/1     Running   0          2m46s
+			kube-system   calico-node-z962l                           1/1     Running   0          2m46s
+			kube-system   coredns-74ff55c5b-pxx5t                     1/1     Running   0          14m
+			kube-system   coredns-74ff55c5b-zbjj7                     1/1     Running   0          14m
+			kube-system   kube-apiserver-master01.apic.lab            1/1     Running   0          14m
+			kube-system   kube-apiserver-master02.apic.lab            1/1     Running   1          11m
+			kube-system   kube-apiserver-master03.apic.lab            1/1     Running   0          9m40s
+			kube-system   kube-controller-manager-master01.apic.lab   1/1     Running   0          14m
+			kube-system   kube-controller-manager-master02.apic.lab   1/1     Running   0          11m
+			kube-system   kube-controller-manager-master03.apic.lab   1/1     Running   0          9m41s
+			kube-system   kube-proxy-7hrt9                            1/1     Running   0          6m12s
+			kube-system   kube-proxy-cwhrl                            1/1     Running   0          5m18s
+			kube-system   kube-proxy-d6f2b                            1/1     Running   0          6m2s
+			kube-system   kube-proxy-fqm66                            1/1     Running   0          14m
+			kube-system   kube-proxy-mpq6w                            1/1     Running   0          11m
+			kube-system   kube-proxy-q7l5c                            1/1     Running   0          5m47s
+			kube-system   kube-proxy-qhpj8                            1/1     Running   0          5m35s
+			kube-system   kube-proxy-rkmwm                            1/1     Running   0          6m29s
+			kube-system   kube-proxy-tpxqs                            1/1     Running   0          9m41s
+			kube-system   kube-scheduler-master01.apic.lab            1/1     Running   0          14m
+			kube-system   kube-scheduler-master02.apic.lab            1/1     Running   0          11m
+			kube-system   kube-scheduler-master03.apic.lab            1/1     Running   0          9m41s
+
+		
+		
+		OBS: Si algo sale mal, puede repetir el proceso ejecutando el siguiente comando en Masters y Workers: 
+    
+		kubeadm reset && rm -rf /etc/cni/net.d
+	
+
+	
+#################################
+## FIN PREPARACIÓN CLÚSTER K8S ##
+#################################
