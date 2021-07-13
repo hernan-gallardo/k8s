@@ -1,0 +1,91 @@
+1.	Crear el espacio de nombre:
+
+kubectl create namespace apiconnect
+
+
+2.	Cree un registry secret con las credenciales que utilizará para extraer las imágenes del producto:
+
+kubectl create secret docker-registry apic-registry-secret --docker-server=192.168.43.190:5000 --docker-username=hgallardo --docker-password=M2nt1.123 --docker-email=hgallardo@menta.net -n apiconnect
+
+3.	Cree un registry secret para el DataPower registry con las credenciales que utilizará para extraer las imágenes del producto:
+
+kubectl create secret docker-registry datapower-docker-local-cred --docker-server=192.168.43.190:5000 --docker-username=hgallardo --docker-password=M2nt1.123 --docker-email=hgallardo@imenta.net -n apiconnect
+
+4.	Cree un DataPower admin secret. El admin secret se utilizará para $ADMIN_USER_SECRET (una variable en el archivo Gateway CR) al implementar el gateway CR.
+
+kubectl create secret generic datapower-admin-credentials --from-literal=password=admin -n apiconnect
+
+
+5.	Configure el archivo ibm-apiconnect.yaml
+
+Abra ibm-apiconnect.yaml en un editor de texto. Reemplace cada ocurrencia de “default” con el espacio de nombres que haya definido previamente ("namespace: default" por "namespace: apiconnect" para esta instalación).
+
+También reemplace el valor de cada “imagen: key”, en la sección “containers” del archivo justo debajo de “imagePullSecrets:”, con la ubicación de las imágenes del operador de apiconnect, ya sea cargadas en su propio registry o extraídas de un registry público.
+
+Para obtener el tag de imagen, use la API de registro:
+curl -XGET https://192.168.43.190:5000/v2/ibm-apiconnect-operator/tags/list | jq
+
+6.	Configure el archivo ibm-datapower.yaml
+
+Abra el archive ibm-datapower.yaml en un editor de texto. Reemplace cada ocurrencia de “default” con el espacio de nombres que haya definido previamente ("namespace: default" por "namespace: apiconnect" para esta instalación).
+
+También reemplace el valor de cada “image: key”, con la ubicación de las imágenes del operador de apiconnect. 
+
+Para obtener el tag de imagen, use la API de registro:
+curl -XGET https://192.168.43.190:5000/v2/datapower-operator/tags/list | jq
+
+En esta instalación reemplace “image: docker.io/ibmcom/datapower-operator:1.3.0” por “image: 192.168.43.188:5000/datapower-operator:1.3.0”
+
+OBS: 
+•	Hay que cambiar donde referencie el namespace "default" por el namespace que se ha definido.
+•	También hay que reemplazar, de ser necesario:
+topologySpreadConstraints:
+- maxSkew: 1
+  topologyKey: zone
+  whenUnsatisfiable: DoNotSchedule
+Por:
+topologySpreadConstraints:
+- maxSkew: 1
+  topologyKey: topology.kubernetes.io/zone
+  whenUnsatisfiable: ScheduleAnyway
+
+
+7.	Instale ibm-apiconnect CRDs.
+
+kubectl apply -f ibm-apiconnect-crds.yaml
+
+8.	Instale ibm-apiconnect Kubernetes deployment.
+
+kubectl apply -f ibm-apiconnect.yaml
+
+9.	Instale ibm-datapower Kubernetes deployment para DataPower Gateway con el espacio de nombres definido para esta instalación:
+
+kubectl apply -f ibm-datapower.yaml -n apiconnect
+
+
+10.	Instalar el cert-manager y configurar certificados:
+
+kubectl apply -f cert-manager-0.10.1.yaml
+
+11.	Verificar que los pods estén iniciados con el comando:
+
+kubectl get po -n cert-manager
+ 
+Hay 3 pods cert-manager en total.
+
+
+12.	Instale el ingress-ca Issuer para que lo utilice cert-manager.
+
+kubectl apply -f ingress-issuer-v1-alpha1.yaml -n apiconnect
+
+Valide que el comando tuvo éxito:
+kubectl get certificates -n apiconnect
+ 
+
+
+
+El contenido de este procedimiento fue tomado de:
+https://www.ibm.com/support/knowledgecenter/es/SSMNED_v10/com.ibm.apic.install.doc/tapic_v10_install_kubernetes_operator_multi_ns.html
+
+
+
