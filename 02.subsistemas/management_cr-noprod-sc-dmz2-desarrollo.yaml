@@ -1,0 +1,102 @@
+
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+
+apiVersion: management.apiconnect.ibm.com/v1beta1
+kind: ManagementCluster
+metadata:
+  name: management
+  labels: {
+    app.kubernetes.io/instance: "management",
+    app.kubernetes.io/managed-by: "ibm-apiconnect",
+    app.kubernetes.io/name: "management"
+  }
+spec:
+  siteName: dc1
+  encryptionSecret:
+    secretName: mgmt-encryption-key  
+  multiSiteHA:
+    mode: active
+    replicationEndpoint:
+      annotations:
+        certmanager.k8s.io/issuer: ingress-issuer
+      hosts:
+      - name: s01dlxwk8s011.sunat.peru  #worker ingress 192.168.57.105 DMZ1 Desarrollo SC
+        secretName: mgmt-replication
+    replicationPeerFQDN: s00dlxwk8s011.sunat.peru  #worker ingress 192.168.46.105 DMZ1 Desarrollo SI
+    tlsClient:
+      secretName: mgmt-replication-client
+  version: 10.0.2.0
+  imagePullSecrets:
+  - apic-registry-secret
+  imageRegistry: 172.26.8.71:30000
+  profile: n1xc4.m16
+  portal:
+    admin:
+      secretName: portal-admin-client
+  analytics:
+    client:
+      secretName: analytics-client-client
+    ingestion:
+      secretName: analytics-ingestion-client
+  gateway:
+    client:
+      secretName: gateway-client-client
+  cloudManagerEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts: 
+    - name: api-admin-noprod.sunat.peru
+      secretName: cm-endpoint
+  apiManagerEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts: 
+    - name: api-manager-noprod.sunat.peru
+      secretName: apim-endpoint
+  platformAPIEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts: 
+    - name: api-platform-noprod.sunat.peru
+      secretName: api-endpoint
+  consumerAPIEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts: 
+    - name: api-consumer-noprod.sunat.peru
+      secretName: consumer-endpoint
+  databaseVolumeClaimTemplate:
+    storageClassName: apic-vsan-vanilla-block-sc
+    volumeSize: 140Gi
+  dbBackupVolumeClaimTemplate:
+    storageClassName: apic-vsan-vanilla-block-sc
+    volumeSize: 120Gi
+  dbArchiveVolumeClaimTemplate:
+    storageClassName: apic-vsan-vanilla-block-sc
+    volumeSize: 30Gi
+  messageQueueVolumeClaimTemplate:
+    storageClassName: apic-vsan-vanilla-block-sc
+    volumeSize: 10Gi
+  microServiceSecurity: certManager
+  certManagerIssuer:
+    name: selfsigning-issuer
+    kind: Issuer
+  license:
+    accept: true
+    use: nonproduction
+    license: 'L-RJON-BZ5LJ5'
+  nodeSelector:
+    nodegroup-type: apic-dmz2-desarrollo
