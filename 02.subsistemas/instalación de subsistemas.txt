@@ -1,0 +1,197 @@
+Instalación de subsistemas
+
+NOTA: El procedimiento detallado se creó el 17 de febrero del 2021. Debe consultarse las referencias detalladas en cada sección para confirmar si existen cambios en el procedimiento.
+
+Management
+
+Referencia: https://www.ibm.com/support/knowledgecenter/en/SSMNED_v10/com.ibm.apic.install.doc/tapic_v10_install_kubernetes_mgmt.html
+
+
+1.	Se debe definir y crear el storage previamente para poder seguir con la instalación de los subsistemas. 
+
+2.	Editar el archivo management_cr.yaml reemplazando:
+
+$APP_PRODUCT_VERSION: 10.0.2.0
+$SECRET_NAME: apic-registry-secret
+$PROFILE: n1xc4.m16
+$DOCKER_REGISTRY: 192.168.43.188:5000
+$STACK_HOST: hostname de la subred que se publicará en k8s, por ejemplo myhost.subnet.example.com
+$STORAGE_CLASS: el storage class para el almacenamiento persistente, por ejemplo “local-storage” o “myblock”
+
+3.	Editar el archivo management_cr.yaml,  dentro de “license” completar de la siguiente manera:
+
+license:
+    accept: true
+    use: nonproduction
+    license: 'L-RJON-BZ5LJ5'
+
+4.	Instalar el subsistema con el comando:
+
+kubectl apply -f management_cr.yaml -n apiconnect
+ 
+
+ 
+5.	Verificar que se encuentra instalado correctamente con el comando:
+
+kubectl get ManagementCluster -n apiconnect
+ 
+
+La instalación se ha completado cuando la columna READY es True y el SUMMARY informa que todos los servicios están en línea (por ejemplo, 14/14).
+No es necesario esperar a que el estado LISTO sea Verdadero antes de pasar a la siguiente instalación del Subsistema.
+
+
+6.	Verifique su conexión a la interfaz de usuario de Cloud Manager en el subsistema Management en su endpoint Cloud Manager.
+
+https: //admin.YOUR_HOSTNAME/admin
+https://admin.apic.lab/admin
+
+	Acceda con las credenciales: admin / 7iron-hide
+
+	Se le solicitará cambiar las credenciales:
+ 
+
+	Ingresará al home de Cloud Manager:
+  
+
+ 
+Developer Portal
+
+Referencia: https://www.ibm.com/support/knowledgecenter/en/SSMNED_v10/com.ibm.apic.install.doc/tapic_v10_install_kubernetes_portal.html
+
+
+1.	Editar el archivo portal_cr.yaml reemplazando:
+
+$APP_PRODUCT_VERSION: 10.0.2.0
+$PROFILE:n1xc2.m8
+$SECRET_NAME:apic-registry-secret
+$DOCKER_REGISTRY: nombre del registro de docker
+$STACK_HOST: hostname de la subred que se publicará en k8s, por ejemplo myhost.subnet.example.com
+$STORAGE_CLASS: el storage class para el almacenamiento persistente, por ejemplo “local-storage”
+
+2.	Editar el archivo portal_cr.yaml,  dentro de “license” completar de la siguiente manera:
+
+license:
+    accept: true
+    use: nonproduction
+    license: 'L-RJON-BZ5LJ5'
+
+
+3.	Editar el archivo portal_cr.yaml,  dentro de “portalAdminEndpoint” modificar el valor de “name” para asociarlo a la capa de exposición respectiva, por ejemplo:
+
+name: api.portal.apiconnect.myhost.subnet.example.com
+name: api.portal.apiconnect.apic.lab
+
+4.	Editar el archivo portal_cr.yaml,  dentro de “portalUIEndpoint” modificar el valor de “name” para asociarlo a la capa de exposición respectiva, por ejemplo:
+
+name: portal.apiconnect.myhost.subnet.example.com
+name: portal.apiconnect.apic.lab
+
+5.	Instalar el subsistema con el commando:
+
+kubectl apply -f portal_cr.yaml -n apiconnect
+ 
+
+6.	Verificar que se encuentra instalado con el comando:
+
+kubectl get PortalCluster -n apiconnect
+ 
+
+
+7.	Respaldar la semilla de encriptación con los siguientes comandos:
+
+kubectl get ptl portal -n <namespace> -o yaml | grep encryptionSecret
+
+kubectl get secret portal-enc-key -n <namespace> -o yaml > portal-enc-key.yaml
+
+Guarde el archivo portal-enc-key.yaml en un lugar seguro.
+
+ 
+ 
+Gateway
+
+Referencia: https://www.ibm.com/support/knowledgecenter/en/SSMNED_v10/com.ibm.apic.install.doc/tapic_v10_install_kubernetes_gwy.html
+
+1.	Editar el archivo apigateway_cr.yaml reemplazando:
+
+$APP_PRODUCT_VERSION: 10.0.1.1-eus
+$PROFILE:n1xc4.m8
+$SECRET_NAME:apic-registry-secret
+$DOCKER_REGISTRY: nombre del registro de docker
+$STACK_HOST: hostname de la subred que se publicará en k8s, por ejemplo myhost.subnet.example.com
+$STORAGE_CLASS: el storage class para el almacenamiento persistente, por ejemplo “local-storage”
+$ADMIN_USER_SECRET: datapower-admin-credentials
+
+2.	Editar el archivo apigateway_cr.yaml,  dentro de “license” completar de la siguiente manera:
+
+license:
+    accept: true
+    use: nonproduction
+
+3.	Editar el archivo apigateway_cr.yaml,  dentro de “gatewayEndpoint” modificar el valor de “name” para asociarlo al namespace, por ejemplo:
+
+name: rgw.intranet.myhost.subnet.example.com
+
+4.	Editar el archivo apigateway_cr.yaml,  dentro de “gatewayManagerEndpoint” modificar el valor de “name” para asociarlo al namespace, por ejemplo:
+
+name: rgwd.intranet.myhost.subnet.example.com
+
+5.	Instalar el subsistema con el commando:
+
+kubectl apply -f apigateway_cr.yaml -n apiconnect
+ 
+
+6.	Verificar que se encuentra instalado con el comando:
+
+kubectl get GatewayCluster -n apiconnect
+ 
+Analytics
+
+Referencia: https://www.ibm.com/support/knowledgecenter/en/SSMNED_v10/com.ibm.apic.install.doc/analytics_install_create_cr_k8s.html
+
+1.	Aumentar el número de mapas en los workers:
+
+sudo sysctl -w vm.max_map_count=262144
+
+2.	Persistir el cambio en los workers editando el archivo /etc/sysctl.conf agregando la siguiente línea:
+
+vm.max_map_count = 262144
+
+3.	Editar el archivo analytics_cr.yaml reemplazando:
+
+$APP_PRODUCT_VERSION: 10.0.1.1-eus
+$PROFILE:n1xc2.m16
+$SECRET_NAME:apic-registry-secret
+$DOCKER_REGISTRY: nombre del registro de docker
+$STACK_HOST: hostname de la subred que se publicará en k8s, por ejemplo myhost.subnet.example.com
+$STORAGE_CLASS: el storage class para el almacenamiento persistente, por ejemplo “local-storage”
+$DATA_VOLUME_SIZE: colocar el tamaño de data a almacenar
+$VOLUME_SIZE: colocar el tamaño de data maestra, para no productivos 5Gi para productivo 10Gi
+
+4.	Editar el archivo analytics_cr.yaml,  dentro de “license” completar de la siguiente manera:
+
+license:
+    accept: true
+    use: nonproduction
+
+5.	Editar el archivo analytics_cr.yaml,  dentro de “client” modificar el valor de “name” para asociarlo al namespace, por ejemplo:
+
+endpoint: 
+      hosts:
+      - name: ac.intranet.myhost.subnet.example.com
+ 
+
+6.	Editar el archivo analytics_cr.yaml,  dentro de “gatewayManagerEndpoint” modificar el valor de “name” para asociarlo al namespace, por ejemplo:
+
+ingestion: 
+      hosts:
+      - name: ai.intranet.myhost.subnet.example.com
+
+7.	Instalar el subsistema con el commando:
+
+kubectl apply -f analytics_cr.yaml -n apiconnect
+ 
+
+8.	Verificar que se encuentra instalado con el comando:
+
+kubectl get AnalyticsCluster -n apiconnect
+  
