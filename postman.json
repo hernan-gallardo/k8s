@@ -1,0 +1,1129 @@
+{
+	"info": {
+		"_postman_id": "dd1da121-bfe2-40bb-96f8-ef65ba6064a2",
+		"name": "Mige-gestion",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01_Procesar",
+			"item": []
+		},
+		{
+			"name": "04_Constancias",
+			"item": [
+				{
+					"name": "00_Autenticacion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);\r",
+									"postman.setGlobalVariable(\"access_token\", data.access_token);\r",
+									"postman.setGlobalVariable(\"refresh_token\", data.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "https://api-cpe.sunat.gob.pe",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "9cae24a9-10d7-48b0-bee0-e94bd56947e3",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "k0z9G2xsxCXVZe2whZ7p7UXzx8NOx08hpe3Qn5fKp8",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "20480072872MODDATOS",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "moddatos",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api-seguridad-desa.sunat.gob.pe:444/v1/clientessol/9cae24a9-10d7-48b0-bee0-e94bd56947e3/oauth2/token",
+							"protocol": "https",
+							"host": [
+								"api-seguridad-desa",
+								"sunat",
+								"gob",
+								"pe"
+							],
+							"port": "444",
+							"path": [
+								"v1",
+								"clientessol",
+								"9cae24a9-10d7-48b0-bee0-e94bd56947e3",
+								"oauth2",
+								"token"
+							]
+						},
+						"description": "solicita token"
+					},
+					"response": []
+				},
+				{
+					"name": "01_Presentar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "numRuc",
+								"type": "text",
+								"value": "20100066603",
+								"disabled": true
+							},
+							{
+								"key": "codUsuario",
+								"type": "text",
+								"value": "MOODATOS",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"perTributario\":\"20210500\",\r\n    \"indPropuesta\":0,\r\n    \"ordPresentacion\":1,\r\n    \"fecFinal\":\"2021-07-25 10:45:56\",\r\n    \"valHashArchivo\":\"2575170659b8fa07546fb9e69534ffd72554731d43b2dc32ac8f31b5f511c78a\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/libros/20100066603/140400",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"libros",
+								"20100066603",
+								"140400"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02_Consultar_PDF",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "numRuc",
+								"value": "20100066603",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/libros/20100066603/140400?ordPresentacion=1&perTributario=20210700&tipArchivo=CONSTANCIA",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"libros",
+								"20100066603",
+								"140400"
+							],
+							"query": [
+								{
+									"key": "ordPresentacion",
+									"value": "1"
+								},
+								{
+									"key": "perTributario",
+									"value": "20210700"
+								},
+								{
+									"key": "tipArchivo",
+									"value": "CONSTANCIA"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03_Consultar_ZIP",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "numRuc",
+								"value": "20100066603",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/libros/20100066603/140400?ordPresentacion=1&perTributario=20210700&tipArchivo=REGISTROS",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"libros",
+								"20100066603",
+								"140400"
+							],
+							"query": [
+								{
+									"key": "ordPresentacion",
+									"value": "1"
+								},
+								{
+									"key": "perTributario",
+									"value": "20210700"
+								},
+								{
+									"key": "tipArchivo",
+									"value": "REGISTROS"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "04_Consultar_Presentaciones",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "numRuc",
+								"value": "20100066603",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/libros/20100066603?perTributario=20210700",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"libros",
+								"20100066603"
+							],
+							"query": [
+								{
+									"key": "perTributario",
+									"value": "20210700"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "09_ Actualizar ResumenLibro",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "numRuc",
+								"type": "text",
+								"value": "20100066603"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"indEstado\": 0, \r\n    \"indPreliminar\": true, \r\n    \"numPreslib\": \"\", \r\n    \"auditoria\": {\r\n        \"codUsuRegis\": \"USR_SUNAT\",\r\n        \"fecRegis\": \"2020-10-04T15:45:55.809Z\",\r\n        \"codUsuModif\": \"MODDATOS\",\r\n        \"fecModif\": \"2021-10-04T15:45:55.809Z\"\r\n    },\r\n    \"lisComprobantes\": [\r\n        {\r\n            \"codCpe\": \"01\",\r\n            \"cntCP\": 1,\r\n            \"mtoValFactExpo\": 0.00,\r\n            \"mtoBIGravada\": 100.00,\r\n            \"mtoDsctoBI\": 0.00,\r\n            \"mtoIGV\": 18.00,\r\n            \"mtoDsctoIGV\": 0.00,\r\n            \"mtoExonerado\": 0.00,\r\n            \"mtoInafecto\": 0.00,\r\n            \"mtoISC\": 0.00,\r\n            \"mtoIcbp\": 0.00,\r\n            \"mtoOtrosTrib\": 0.00,\r\n            \"mtoDsctoNABI\": 0.00,\r\n            \"mtoCargoNABI\": 0.00,\r\n            \"mtoTotalCP\": 118.00,\r\n            \"mtoValorOpGratuita\": 0.00\r\n        }]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/resumenes-libro/20100066603/140400/20210700/0/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"resumenes-libro",
+								"20100066603",
+								"140400",
+								"20210700",
+								"0",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02_Consultar_PDF (Pública)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://api-cpe.sunat.gob.pe/v1/contribuyente/migeigv/libros/140400?ordPresentacion=1&perTributario=20210700&tipArchivo=CONSTANCIA",
+							"protocol": "https",
+							"host": [
+								"api-cpe",
+								"sunat",
+								"gob",
+								"pe"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"migeigv",
+								"libros",
+								"140400"
+							],
+							"query": [
+								{
+									"key": "ordPresentacion",
+									"value": "1"
+								},
+								{
+									"key": "perTributario",
+									"value": "20210700"
+								},
+								{
+									"key": "tipArchivo",
+									"value": "CONSTANCIA"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03_Consultar_ZIP (Pública)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://api-cpe.sunat.gob.pe/v1/contribuyente/migeigv/libros/140400?ordPresentacion=1&perTributario=20210700&tipArchivo=REGISTROS",
+							"protocol": "https",
+							"host": [
+								"api-cpe",
+								"sunat",
+								"gob",
+								"pe"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"migeigv",
+								"libros",
+								"140400"
+							],
+							"query": [
+								{
+									"key": "ordPresentacion",
+									"value": "1"
+								},
+								{
+									"key": "perTributario",
+									"value": "20210700"
+								},
+								{
+									"key": "tipArchivo",
+									"value": "REGISTROS"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "04_Consultar_Presentaciones (Pública)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://api-cpe.sunat.gob.pe/v1/contribuyente/migeigv/libros?perTributario=20210700",
+							"protocol": "https",
+							"host": [
+								"api-cpe",
+								"sunat",
+								"gob",
+								"pe"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"migeigv",
+								"libros"
+							],
+							"query": [
+								{
+									"key": "perTributario",
+									"value": "20210700"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_Presentar (Pública)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"perTributario\":\"20210500\",\r\n    \"indPropuesta\":0,\r\n    \"ordPresentacion\":1,\r\n    \"fecFinal\":\"2021-07-25 10:45:56\",\r\n    \"valHashArchivo\":\"22016cc10b91cfd8e9909898fcd2a2ef4308d774b854f201a6906257542c2df6\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api-cpe.sunat.gob.pe/v1/contribuyente/migeigv/libros/140400",
+							"protocol": "https",
+							"host": [
+								"api-cpe",
+								"sunat",
+								"gob",
+								"pe"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"migeigv",
+								"libros",
+								"140400"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "02_cpSunatRvi",
+			"item": [
+				{
+					"name": "05_Comprobantes(cpSunatRvi): Registrar (Pública)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pkcomprobante\": {\r\n\t\t\"numRuc\": \"20100066603\",\r\n\t\t\"codCpe\": \"01\",\r\n\t\t\"numSerie\": \"F002\",\r\n\t\t\"numCpe\": \"5\"\r\n\t},\r\n  \"rznSocial\": \"PERU SAC\",\r\n  \"perTributario\": \"20210700\",\r\n  \"CUO\": \"\",\r\n  \"indEstado\": \"ACEPTADO\",\r\n  \"indVigente\": true,\r\n  \"receptor\": {\r\n      \"tipDocumento\": \"6\",\r\n      \"numDocumento\": \"20200077703\",\r\n      \"rznSocial\": \"CLIENTE SAC\"\r\n  },\r\n  \"codMoneda\": \"PEN\",\r\n  \"mtoTipoCambio\": \"1.00000\",\r\n  \"fecEmision\": \"2021-07-01T14:02:23.123Z\",\r\n  \"fecVencimiento\": \"2021-08-01T14:02:23.123Z\",\r\n  \"idProyecto\": \"COD-123-2019\",\r\n  \"desFormaPago\": \"\",\r\n  \"indMedioPago\": 1,\r\n  \"indOperGratuita\": \"1\",\r\n  \"codOperacionSujetaPRD\": \"1\",\r\n  \"codSistemaAdm\": \"1\",\r\n  \"fecGeneracion\": \"\",\r\n  \"codOrigenDatos\": \"1\",\r\n  \"codTipoOperacion\": \"01\",\r\n  \"numFinal\": \"\",\r\n  \"mtoValorFob\": 0.00,\r\n  \"mtoValFactExpo\": 0.00,\r\n  \"mtoBIGravada\": 100.00,\r\n  \"mtoDsctoBI\": 0.00,\r\n  \"mtoIGV\": 18.00,\r\n  \"mtoDsctoIGV\": 0.00,\r\n  \"mtoExonerado\": 0.00,\r\n  \"mtoInafecto\": 0.00,\r\n  \"mtoISC\": 0.00,\r\n  \"mtoBIIvap\": 0.00,\r\n  \"mtoIvap\": 0.00,\r\n  \"mtoIcbp\": 0.00,\r\n  \"mtoOtrosTrib\": 0.00,\r\n  \"mtoTotalCP\": 118.00,\r\n  \"mtoValorOpGratuita\": 0.00,\r\n  \"mtoSumCargosBI\": 0.00,\r\n  \"mtoDsctoGlobBI\": 0.00,\r\n  \"mtoSumValores\": 0.00,\r\n  \"mtoCargoGlobBI\": 0.00,\r\n  \"mtoSumDsctosBI\": 0.00,\r\n  \"mtoSumIGV\": 0.00,\r\n  \"mtoAnticipos\": 0.00,\r\n  \"nroDAM\": \"\",\r\n  \"nroCP\": \"\",\r\n  \"desMotivo\": \"\",\r\n  \"lisCpModificados\": [{\r\n        \"tipComprobante\": \"\",     \r\n        \"codSerie\": \"\",\r\n        \"numComprobante\": \"\",\r\n        \"fecEmision\": \"\"\r\n      }\r\n  ],\r\n  \"indCompletoRvi\": true,\r\n  \"lisError\": [{\r\n        \"nomCampo\": \"001\",\r\n        \"desError\": \"tipo de cambio no encontrado\"\r\n      }, {\r\n        \"nomCampo\": \"002\",\r\n        \"desError\": \"Valor del codigo de moneda no encontrado\"\r\n      }\r\n  ],\r\n  \"evento\": {\r\n      \"fecRegis\": \"2021-07-01T15:45:55.000Z\",\r\n      \"fecModif\": \"1900-01-01T00:00:00.000Z\"\r\n  },\r\n  \"auditoria\": {\r\n      \"codUsuRegis\": \"USR_SUNAT\",\r\n      \"fecRegis\": \"2021-07-01T15:45:55.809Z\",\r\n      \"codUsuModif\": \"MODDATOS\",\r\n      \"fecModif\": \"2021-07-02T15:45:55.809Z\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api-cpe.sunat.gob.pe/v1/contribuyente/migeigv/comprobantes",
+							"protocol": "https",
+							"host": [
+								"api-cpe",
+								"sunat",
+								"gob",
+								"pe"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"migeigv",
+								"comprobantes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "07_Comprobantes(cpSunatRvi): Consultar filtro (Pública)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pkcomprobante\": {\r\n\t\t\"numRuc\": \"20100066603\",\r\n\t\t\"codCpe\": \"01\",\r\n\t\t\"numSerie\": \"F002\",\r\n\t\t\"numCpe\": \"1\"\r\n\t},\r\n  \"rznSocial\": \"PERU SAC\",\r\n  \"perTributario\": \"20210700\",\r\n  \"CUO\": \"\",\r\n  \"indEstado\": \"ACEPTADO\",\r\n  \"indVigente\": true,\r\n  \"receptor\": {\r\n      \"tipDocumento\": \"6\",\r\n      \"numDocumento\": \"20200077703\",\r\n      \"rznSocial\": \"CLIENTE SAC\"\r\n  },\r\n  \"codMoneda\": \"PEN\",\r\n  \"mtoTipoCambio\": \"1.00000\",\r\n  \"fecEmision\": \"2021-07-01\",\r\n  \"fecVencimiento\": \"2021-08-01\",\r\n  \"idProyecto\": \"COD-123-2019\",\r\n  \"desFormaPago\": \"\",\r\n  \"indMedioPago\": 1,\r\n  \"indOperGratuita\": \"1\",\r\n  \"codOperacionSujetaPRD\": \"1\",\r\n  \"codSistemaAdm\": \"1\",\r\n  \"fecGeneracion\": \"\",\r\n  \"codOrigenDatos\": \"1\",\r\n  \"codTipoOperacion\": \"01\",\r\n  \"numFinal\": \"\",\r\n  \"mtoValorFob\": \"0.00\",\r\n  \"mtoValFactExpo\": \"0.00\",\r\n  \"mtoBIGravada\": \"100.00\",\r\n  \"mtoDsctoBI\": \"0.00\",\r\n  \"mtoIGV\": \"18.00\",\r\n  \"mtoDsctoIGV\": \"0.00\",\r\n  \"mtoExonerado\": \"0.00\",\r\n  \"mtoInafecto\": \"0.00\",\r\n  \"mtoISC\": \"0.00\",\r\n  \"mtoBIIvap\": \"0.00\",\r\n  \"mtoIvap\": \"0.00\",\r\n  \"mtoIcbp\": \"0.00\",\r\n  \"mtoOtrosTrib\": \"0.00\",\r\n  \"mtoTotalCP\": \"118.00\",\r\n  \"mtoValorOpGratuita\": \"0.00\",\r\n  \"mtoSumCargosBI\": \"0.00\",\r\n  \"mtoDsctoGlobBI\": \"0.00\",\r\n  \"mtoSumValores\": \"0.00\",\r\n  \"mtoCargoGlobBI\": \"0.00\",\r\n  \"mtoSumDsctosBI\": \"0.00\",\r\n  \"mtoSumIGV\": \"0.00\",\r\n  \"mtoAnticipos\": \"0.00\",\r\n  \"nroDAM\": \"\",\r\n  \"nroCP\": \"\",\r\n  \"desMotivo\": \"\",\r\n  \"lisCpModificados\": [{\r\n        \"tipComprobante\": \"\",     \r\n        \"codSerie\": \"\",\r\n        \"numComprobante\": \"\",\r\n        \"fecEmision\": \"\"\r\n      }\r\n  ],\r\n  \"indObservado\": \"true\",\r\n  \"lisError\": [{\r\n        \"nomCampo\": \"001\",\r\n        \"desError\": \"tipo de cambio no encontrado\"\r\n      }, {\r\n        \"nomCampo\": \"002\",\r\n        \"desError\": \"Valor del codigo de moneda no encontrado\"\r\n      }\r\n  ],\r\n  \"evento\": {\r\n      \"fecRegis\": \"2021-07-01T15:45:55.000-05:00\",\r\n      \"fecModif\": \"1900-01-01T00:00:00.000-05:00\"\r\n  },\r\n  \"auditoria\": {\r\n      \"codUsuRegis\": \"USR_SUNAT\",\r\n      \"fecRegis\": \"2021-07-01T15:45:55.809Z\",\r\n      \"codUsuModif\": \"MODDATOS\",\r\n      \"fecModif\": \"2021-07-02T15:45:55.809Z\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api-cpe.sunat.gob.pe/v1/contribuyente/migeigv/comprobantes?codLibro=140400&indPropuesta=0&perTributario=20210500&fecInicio=2021-05-01T05:08:31.096Z&fecFinal=2021-10-02T15:45:55.800Z",
+							"protocol": "https",
+							"host": [
+								"api-cpe",
+								"sunat",
+								"gob",
+								"pe"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"migeigv",
+								"comprobantes"
+							],
+							"query": [
+								{
+									"key": "codLibro",
+									"value": "140400"
+								},
+								{
+									"key": "indPropuesta",
+									"value": "0"
+								},
+								{
+									"key": "perTributario",
+									"value": "20210500"
+								},
+								{
+									"key": "fecInicio",
+									"value": "2021-05-01T05:08:31.096Z"
+								},
+								{
+									"key": "fecFinal",
+									"value": "2021-10-02T15:45:55.800Z"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "05_Comprobantes(cpSunatRvi): Registrar",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pkcomprobante\": {\r\n\t\t\"numRuc\": \"20100066604\",\r\n\t\t\"codCpe\": \"01\",\r\n\t\t\"numSerie\": \"F003\",\r\n\t\t\"numCpe\": \"5\"\r\n\t},\r\n  \"rznSocial\": \"PERU SAC\",\r\n  \"perTributario\": \"20210700\",\r\n  \"CUO\": \"\",\r\n  \"indEstado\": \"ACEPTADO\",\r\n  \"indVigente\": true,\r\n  \"receptor\": {\r\n      \"tipDocumento\": \"6\",\r\n      \"numDocumento\": \"20200077703\",\r\n      \"rznSocial\": \"CLIENTE SAC\"\r\n  },\r\n  \"codMoneda\": \"PEN\",\r\n  \"mtoTipoCambio\": \"1.00000\",\r\n  \"fecEmision\": \"2021-07-01T14:02:23.123Z\",\r\n  \"fecVencimiento\": \"2021-08-01T14:02:23.123Z\",\r\n  \"idProyecto\": \"COD-123-2019\",\r\n  \"desFormaPago\": \"\",\r\n  \"indMedioPago\": 1,\r\n  \"indOperGratuita\": \"1\",\r\n  \"codOperacionSujetaPRD\": \"1\",\r\n  \"codSistemaAdm\": \"1\",\r\n  \"fecGeneracion\": \"\",\r\n  \"codOrigenDatos\": \"1\",\r\n  \"codTipoOperacion\": \"01\",\r\n  \"numFinal\": \"\",\r\n  \"mtoValorFob\": 0.00,\r\n  \"mtoValFactExpo\": 0.00,\r\n  \"mtoBIGravada\": 100.00,\r\n  \"mtoDsctoBI\": 0.00,\r\n  \"mtoIGV\": 18.00,\r\n  \"mtoDsctoIGV\": 0.00,\r\n  \"mtoExonerado\": 0.00,\r\n  \"mtoInafecto\": 0.00,\r\n  \"mtoISC\": 0.00,\r\n  \"mtoBIIvap\": 0.00,\r\n  \"mtoIvap\": 0.00,\r\n  \"mtoIcbp\": 0.00,\r\n  \"mtoOtrosTrib\": 0.00,\r\n  \"mtoTotalCP\": 118.00,\r\n  \"mtoValorOpGratuita\": 0.00,\r\n  \"mtoSumCargosBI\": 0.00,\r\n  \"mtoDsctoGlobBI\": 0.00,\r\n  \"mtoSumValores\": 0.00,\r\n  \"mtoCargoGlobBI\": 0.00,\r\n  \"mtoSumDsctosBI\": 0.00,\r\n  \"mtoSumIGV\": 0.00,\r\n  \"mtoAnticipos\": 0.00,\r\n  \"nroDAM\": \"\",\r\n  \"nroCP\": \"\",\r\n  \"desMotivo\": \"\",\r\n  \"lisCpModificados\": [{\r\n        \"tipComprobante\": \"\",     \r\n        \"codSerie\": \"\",\r\n        \"numComprobante\": \"\",\r\n        \"fecEmision\": \"\"\r\n      }\r\n  ],\r\n  \"indCompletoRvi\": true,\r\n  \"lisError\": [{\r\n        \"nomCampo\": \"001\",\r\n        \"desError\": \"tipo de cambio no encontrado\"\r\n      }, {\r\n        \"nomCampo\": \"002\",\r\n        \"desError\": \"Valor del codigo de moneda no encontrado\"\r\n      }\r\n  ],\r\n  \"evento\": {\r\n      \"fecRegis\": \"2021-07-01T15:45:55.000Z\",\r\n      \"fecModif\": \"1970-01-01T00:00:00.000Z\"\r\n  },\r\n  \"auditoria\": {\r\n      \"codUsuRegis\": \"USR_SUNAT\",\r\n      \"fecRegis\": \"2021-07-01T15:45:55.809Z\",\r\n      \"codUsuModif\": \"MODDATOS\",\r\n      \"fecModif\": \"2021-07-02T15:45:55.809Z\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/comprobantes",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"comprobantes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "07_Comprobantes(cpSunatRvi): Consultar filtro",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "numRuc",
+								"value": "20100066603",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pkcomprobante\": {\r\n\t\t\"numRuc\": \"20100066603\",\r\n\t\t\"codCpe\": \"01\",\r\n\t\t\"numSerie\": \"F002\",\r\n\t\t\"numCpe\": \"1\"\r\n\t},\r\n  \"rznSocial\": \"PERU SAC\",\r\n  \"perTributario\": \"20210700\",\r\n  \"CUO\": \"\",\r\n  \"indEstado\": \"ACEPTADO\",\r\n  \"indVigente\": true,\r\n  \"receptor\": {\r\n      \"tipDocumento\": \"6\",\r\n      \"numDocumento\": \"20200077703\",\r\n      \"rznSocial\": \"CLIENTE SAC\"\r\n  },\r\n  \"codMoneda\": \"PEN\",\r\n  \"mtoTipoCambio\": \"1.00000\",\r\n  \"fecEmision\": \"2021-07-01\",\r\n  \"fecVencimiento\": \"2021-08-01\",\r\n  \"idProyecto\": \"COD-123-2019\",\r\n  \"desFormaPago\": \"\",\r\n  \"indMedioPago\": 1,\r\n  \"indOperGratuita\": \"1\",\r\n  \"codOperacionSujetaPRD\": \"1\",\r\n  \"codSistemaAdm\": \"1\",\r\n  \"fecGeneracion\": \"\",\r\n  \"codOrigenDatos\": \"1\",\r\n  \"codTipoOperacion\": \"01\",\r\n  \"numFinal\": \"\",\r\n  \"mtoValorFob\": \"0.00\",\r\n  \"mtoValFactExpo\": \"0.00\",\r\n  \"mtoBIGravada\": \"100.00\",\r\n  \"mtoDsctoBI\": \"0.00\",\r\n  \"mtoIGV\": \"18.00\",\r\n  \"mtoDsctoIGV\": \"0.00\",\r\n  \"mtoExonerado\": \"0.00\",\r\n  \"mtoInafecto\": \"0.00\",\r\n  \"mtoISC\": \"0.00\",\r\n  \"mtoBIIvap\": \"0.00\",\r\n  \"mtoIvap\": \"0.00\",\r\n  \"mtoIcbp\": \"0.00\",\r\n  \"mtoOtrosTrib\": \"0.00\",\r\n  \"mtoTotalCP\": \"118.00\",\r\n  \"mtoValorOpGratuita\": \"0.00\",\r\n  \"mtoSumCargosBI\": \"0.00\",\r\n  \"mtoDsctoGlobBI\": \"0.00\",\r\n  \"mtoSumValores\": \"0.00\",\r\n  \"mtoCargoGlobBI\": \"0.00\",\r\n  \"mtoSumDsctosBI\": \"0.00\",\r\n  \"mtoSumIGV\": \"0.00\",\r\n  \"mtoAnticipos\": \"0.00\",\r\n  \"nroDAM\": \"\",\r\n  \"nroCP\": \"\",\r\n  \"desMotivo\": \"\",\r\n  \"lisCpModificados\": [{\r\n        \"tipComprobante\": \"\",     \r\n        \"codSerie\": \"\",\r\n        \"numComprobante\": \"\",\r\n        \"fecEmision\": \"\"\r\n      }\r\n  ],\r\n  \"indObservado\": \"true\",\r\n  \"lisError\": [{\r\n        \"nomCampo\": \"001\",\r\n        \"desError\": \"tipo de cambio no encontrado\"\r\n      }, {\r\n        \"nomCampo\": \"002\",\r\n        \"desError\": \"Valor del codigo de moneda no encontrado\"\r\n      }\r\n  ],\r\n  \"evento\": {\r\n      \"fecRegis\": \"2021-07-01T15:45:55.000-05:00\",\r\n      \"fecModif\": \"1900-01-01T00:00:00.000-05:00\"\r\n  },\r\n  \"auditoria\": {\r\n      \"codUsuRegis\": \"USR_SUNAT\",\r\n      \"fecRegis\": \"2021-07-01T15:45:55.809Z\",\r\n      \"codUsuModif\": \"MODDATOS\",\r\n      \"fecModif\": \"2021-07-02T15:45:55.809Z\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/comprobantes/20100066603?codLibro=140400&indPropuesta=0&perTributario=20210700&fecInicio=2021-07-01T05:08:31.096Z&fecFinal=2021-10-02T15:45:55.800Z",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"comprobantes",
+								"20100066603"
+							],
+							"query": [
+								{
+									"key": "codLibro",
+									"value": "140400"
+								},
+								{
+									"key": "indPropuesta",
+									"value": "0"
+								},
+								{
+									"key": "perTributario",
+									"value": "20210700"
+								},
+								{
+									"key": "fecInicio",
+									"value": "2021-07-01T05:08:31.096Z"
+								},
+								{
+									"key": "fecFinal",
+									"value": "2021-10-02T15:45:55.800Z"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "07_Comprobantes(cpSunatRvi): Consultar filtro 20210500",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "numRuc",
+								"type": "text",
+								"value": "20100066603"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pkcomprobante\": {\r\n\t\t\"numRuc\": \"20100066603\",\r\n\t\t\"codCpe\": \"01\",\r\n\t\t\"numSerie\": \"F002\",\r\n\t\t\"numCpe\": \"1\"\r\n\t},\r\n  \"rznSocial\": \"PERU SAC\",\r\n  \"perTributario\": \"20210700\",\r\n  \"CUO\": \"\",\r\n  \"indEstado\": \"ACEPTADO\",\r\n  \"indVigente\": true,\r\n  \"receptor\": {\r\n      \"tipDocumento\": \"6\",\r\n      \"numDocumento\": \"20200077703\",\r\n      \"rznSocial\": \"CLIENTE SAC\"\r\n  },\r\n  \"codMoneda\": \"PEN\",\r\n  \"mtoTipoCambio\": \"1.00000\",\r\n  \"fecEmision\": \"2021-07-01\",\r\n  \"fecVencimiento\": \"2021-08-01\",\r\n  \"idProyecto\": \"COD-123-2019\",\r\n  \"desFormaPago\": \"\",\r\n  \"indMedioPago\": 1,\r\n  \"indOperGratuita\": \"1\",\r\n  \"codOperacionSujetaPRD\": \"1\",\r\n  \"codSistemaAdm\": \"1\",\r\n  \"fecGeneracion\": \"\",\r\n  \"codOrigenDatos\": \"1\",\r\n  \"codTipoOperacion\": \"01\",\r\n  \"numFinal\": \"\",\r\n  \"mtoValorFob\": \"0.00\",\r\n  \"mtoValFactExpo\": \"0.00\",\r\n  \"mtoBIGravada\": \"100.00\",\r\n  \"mtoDsctoBI\": \"0.00\",\r\n  \"mtoIGV\": \"18.00\",\r\n  \"mtoDsctoIGV\": \"0.00\",\r\n  \"mtoExonerado\": \"0.00\",\r\n  \"mtoInafecto\": \"0.00\",\r\n  \"mtoISC\": \"0.00\",\r\n  \"mtoBIIvap\": \"0.00\",\r\n  \"mtoIvap\": \"0.00\",\r\n  \"mtoIcbp\": \"0.00\",\r\n  \"mtoOtrosTrib\": \"0.00\",\r\n  \"mtoTotalCP\": \"118.00\",\r\n  \"mtoValorOpGratuita\": \"0.00\",\r\n  \"mtoSumCargosBI\": \"0.00\",\r\n  \"mtoDsctoGlobBI\": \"0.00\",\r\n  \"mtoSumValores\": \"0.00\",\r\n  \"mtoCargoGlobBI\": \"0.00\",\r\n  \"mtoSumDsctosBI\": \"0.00\",\r\n  \"mtoSumIGV\": \"0.00\",\r\n  \"mtoAnticipos\": \"0.00\",\r\n  \"nroDAM\": \"\",\r\n  \"nroCP\": \"\",\r\n  \"desMotivo\": \"\",\r\n  \"lisCpModificados\": [{\r\n        \"tipComprobante\": \"\",     \r\n        \"codSerie\": \"\",\r\n        \"numComprobante\": \"\",\r\n        \"fecEmision\": \"\"\r\n      }\r\n  ],\r\n  \"indObservado\": \"true\",\r\n  \"lisError\": [{\r\n        \"nomCampo\": \"001\",\r\n        \"desError\": \"tipo de cambio no encontrado\"\r\n      }, {\r\n        \"nomCampo\": \"002\",\r\n        \"desError\": \"Valor del codigo de moneda no encontrado\"\r\n      }\r\n  ],\r\n  \"evento\": {\r\n      \"fecRegis\": \"2021-07-01T15:45:55.000-05:00\",\r\n      \"fecModif\": \"1900-01-01T00:00:00.000-05:00\"\r\n  },\r\n  \"auditoria\": {\r\n      \"codUsuRegis\": \"USR_SUNAT\",\r\n      \"fecRegis\": \"2021-07-01T15:45:55.809Z\",\r\n      \"codUsuModif\": \"MODDATOS\",\r\n      \"fecModif\": \"2021-07-02T15:45:55.809Z\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/comprobantes/20100066603?codLibro=140400&indPropuesta=0&perTributario=20210500&fecInicio=2021-05-01T00:08:31.096Z&fecFinal=2021-10-02T15:45:55.800Z",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"comprobantes",
+								"20100066603"
+							],
+							"query": [
+								{
+									"key": "codLibro",
+									"value": "140400"
+								},
+								{
+									"key": "indPropuesta",
+									"value": "0"
+								},
+								{
+									"key": "perTributario",
+									"value": "20210500"
+								},
+								{
+									"key": "fecInicio",
+									"value": "2021-05-01T00:08:31.096Z"
+								},
+								{
+									"key": "fecFinal",
+									"value": "2021-10-02T15:45:55.800Z"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "12_Comprobantes(cpSunatRvi): reprocesar",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "numRuc",
+								"type": "text",
+								"value": "20100066603"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pkcomprobante\": {\r\n\t\t\"numRuc\": \"20100066603\",\r\n\t\t\"codCpe\": \"01\",\r\n\t\t\"numSerie\": \"F002\",\r\n\t\t\"numCpe\": \"1\"\r\n\t},\r\n  \"rznSocial\": \"PERU SAC\",\r\n  \"perTributario\": \"20210700\",\r\n  \"CUO\": \"\",\r\n  \"indEstado\": \"ACEPTADO\",\r\n  \"indVigente\": true,\r\n  \"receptor\": {\r\n      \"tipDocumento\": \"6\",\r\n      \"numDocumento\": \"20200077703\",\r\n      \"rznSocial\": \"CLIENTE SAC\"\r\n  },\r\n  \"codMoneda\": \"PEN\",\r\n  \"mtoTipoCambio\": \"1.00000\",\r\n  \"fecEmision\": \"2021-07-01\",\r\n  \"fecVencimiento\": \"2021-08-01\",\r\n  \"idProyecto\": \"COD-123-2019\",\r\n  \"desFormaPago\": \"\",\r\n  \"indMedioPago\": 1,\r\n  \"indOperGratuita\": \"1\",\r\n  \"codOperacionSujetaPRD\": \"1\",\r\n  \"codSistemaAdm\": \"1\",\r\n  \"fecGeneracion\": \"\",\r\n  \"codOrigenDatos\": \"1\",\r\n  \"codTipoOperacion\": \"01\",\r\n  \"numFinal\": \"\",\r\n  \"mtoValorFob\": \"0.00\",\r\n  \"mtoValFactExpo\": \"0.00\",\r\n  \"mtoBIGravada\": \"100.00\",\r\n  \"mtoDsctoBI\": \"0.00\",\r\n  \"mtoIGV\": \"18.00\",\r\n  \"mtoDsctoIGV\": \"0.00\",\r\n  \"mtoExonerado\": \"0.00\",\r\n  \"mtoInafecto\": \"0.00\",\r\n  \"mtoISC\": \"0.00\",\r\n  \"mtoBIIvap\": \"0.00\",\r\n  \"mtoIvap\": \"0.00\",\r\n  \"mtoIcbp\": \"0.00\",\r\n  \"mtoOtrosTrib\": \"0.00\",\r\n  \"mtoTotalCP\": \"118.00\",\r\n  \"mtoValorOpGratuita\": \"0.00\",\r\n  \"mtoSumCargosBI\": \"0.00\",\r\n  \"mtoDsctoGlobBI\": \"0.00\",\r\n  \"mtoSumValores\": \"0.00\",\r\n  \"mtoCargoGlobBI\": \"0.00\",\r\n  \"mtoSumDsctosBI\": \"0.00\",\r\n  \"mtoSumIGV\": \"0.00\",\r\n  \"mtoAnticipos\": \"0.00\",\r\n  \"nroDAM\": \"\",\r\n  \"nroCP\": \"\",\r\n  \"desMotivo\": \"\",\r\n  \"lisCpModificados\": [{\r\n        \"tipComprobante\": \"\",     \r\n        \"codSerie\": \"\",\r\n        \"numComprobante\": \"\",\r\n        \"fecEmision\": \"\"\r\n      }\r\n  ],\r\n  \"indObservado\": \"true\",\r\n  \"lisError\": [{\r\n        \"nomCampo\": \"001\",\r\n        \"desError\": \"tipo de cambio no encontrado\"\r\n      }, {\r\n        \"nomCampo\": \"002\",\r\n        \"desError\": \"Valor del codigo de moneda no encontrado\"\r\n      }\r\n  ],\r\n  \"evento\": {\r\n      \"fecRegis\": \"2021-07-01T15:45:55.000-05:00\",\r\n      \"fecModif\": \"1900-01-01T00:00:00.000-05:00\"\r\n  },\r\n  \"auditoria\": {\r\n      \"codUsuRegis\": \"USR_SUNAT\",\r\n      \"fecRegis\": \"2021-07-01T15:45:55.809Z\",\r\n      \"codUsuModif\": \"MODDATOS\",\r\n      \"fecModif\": \"2021-07-02T15:45:55.809Z\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/t/reprocesar/20552174918/20210600/140400",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"t",
+								"reprocesar",
+								"20552174918",
+								"20210600",
+								"140400"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "13_Comprobantes(cpSunatRvi): reacumular",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "numRuc",
+								"type": "text",
+								"value": "20100066603"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pkcomprobante\": {\r\n\t\t\"numRuc\": \"20100066603\",\r\n\t\t\"codCpe\": \"01\",\r\n\t\t\"numSerie\": \"F002\",\r\n\t\t\"numCpe\": \"1\"\r\n\t},\r\n  \"rznSocial\": \"PERU SAC\",\r\n  \"perTributario\": \"20210700\",\r\n  \"CUO\": \"\",\r\n  \"indEstado\": \"ACEPTADO\",\r\n  \"indVigente\": true,\r\n  \"receptor\": {\r\n      \"tipDocumento\": \"6\",\r\n      \"numDocumento\": \"20200077703\",\r\n      \"rznSocial\": \"CLIENTE SAC\"\r\n  },\r\n  \"codMoneda\": \"PEN\",\r\n  \"mtoTipoCambio\": \"1.00000\",\r\n  \"fecEmision\": \"2021-07-01\",\r\n  \"fecVencimiento\": \"2021-08-01\",\r\n  \"idProyecto\": \"COD-123-2019\",\r\n  \"desFormaPago\": \"\",\r\n  \"indMedioPago\": 1,\r\n  \"indOperGratuita\": \"1\",\r\n  \"codOperacionSujetaPRD\": \"1\",\r\n  \"codSistemaAdm\": \"1\",\r\n  \"fecGeneracion\": \"\",\r\n  \"codOrigenDatos\": \"1\",\r\n  \"codTipoOperacion\": \"01\",\r\n  \"numFinal\": \"\",\r\n  \"mtoValorFob\": \"0.00\",\r\n  \"mtoValFactExpo\": \"0.00\",\r\n  \"mtoBIGravada\": \"100.00\",\r\n  \"mtoDsctoBI\": \"0.00\",\r\n  \"mtoIGV\": \"18.00\",\r\n  \"mtoDsctoIGV\": \"0.00\",\r\n  \"mtoExonerado\": \"0.00\",\r\n  \"mtoInafecto\": \"0.00\",\r\n  \"mtoISC\": \"0.00\",\r\n  \"mtoBIIvap\": \"0.00\",\r\n  \"mtoIvap\": \"0.00\",\r\n  \"mtoIcbp\": \"0.00\",\r\n  \"mtoOtrosTrib\": \"0.00\",\r\n  \"mtoTotalCP\": \"118.00\",\r\n  \"mtoValorOpGratuita\": \"0.00\",\r\n  \"mtoSumCargosBI\": \"0.00\",\r\n  \"mtoDsctoGlobBI\": \"0.00\",\r\n  \"mtoSumValores\": \"0.00\",\r\n  \"mtoCargoGlobBI\": \"0.00\",\r\n  \"mtoSumDsctosBI\": \"0.00\",\r\n  \"mtoSumIGV\": \"0.00\",\r\n  \"mtoAnticipos\": \"0.00\",\r\n  \"nroDAM\": \"\",\r\n  \"nroCP\": \"\",\r\n  \"desMotivo\": \"\",\r\n  \"lisCpModificados\": [{\r\n        \"tipComprobante\": \"\",     \r\n        \"codSerie\": \"\",\r\n        \"numComprobante\": \"\",\r\n        \"fecEmision\": \"\"\r\n      }\r\n  ],\r\n  \"indObservado\": \"true\",\r\n  \"lisError\": [{\r\n        \"nomCampo\": \"001\",\r\n        \"desError\": \"tipo de cambio no encontrado\"\r\n      }, {\r\n        \"nomCampo\": \"002\",\r\n        \"desError\": \"Valor del codigo de moneda no encontrado\"\r\n      }\r\n  ],\r\n  \"evento\": {\r\n      \"fecRegis\": \"2021-07-01T15:45:55.000-05:00\",\r\n      \"fecModif\": \"1900-01-01T00:00:00.000-05:00\"\r\n  },\r\n  \"auditoria\": {\r\n      \"codUsuRegis\": \"USR_SUNAT\",\r\n      \"fecRegis\": \"2021-07-01T15:45:55.809Z\",\r\n      \"codUsuModif\": \"MODDATOS\",\r\n      \"fecModif\": \"2021-07-02T15:45:55.809Z\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/t/reacumular/20100066603/20210600/140400",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"t",
+								"reacumular",
+								"20100066603",
+								"20210600",
+								"140400"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "05_Resumenes-Libro",
+			"item": [
+				{
+					"name": "08_Resumenes-Libro: Registrar",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{        \r\n  \"pkResumenLibro\": {\r\n        \"numRuc\": \"20100066603\",\r\n        \"codLibro\": \"140400\",\r\n        \"perTributario\": \"20210500\",\r\n        \"indPropuesta\": 0,\r\n        \"ordPresentacion\": 1 \r\n     },\r\n    \"indEstado\": 0, \r\n    \"indPreliminar\": false, \r\n    \"numPreslib\": \"\", \r\n    \"auditoria\": {\r\n        \"codUsuRegis\": \"USR_SUNAT\",\r\n        \"fecRegis\": \"2020-10-04T15:45:55.809Z\",\r\n        \"codUsuModif\": \"MODDATOS\",\r\n        \"fecModif\": \"2021-10-04T15:45:55.809Z\"\r\n    },\r\n    \"lisComprobantes\": [\r\n        {\r\n            \"codCpe\": \"01\",\r\n            \"cntCP\": 0,\r\n            \"mtoValFactExpo\": 0.00,\r\n            \"mtoBIGravada\": 0.00,\r\n            \"mtoDsctoBI\": 0.00,\r\n            \"mtoIGV\": 0.00,\r\n            \"mtoDsctoIGV\": 0.00,\r\n            \"mtoExonerado\": 0.00,\r\n            \"mtoInafecto\": 0.00,\r\n            \"mtoISC\": 0.00,\r\n            \"mtoIcbp\": 0.00,\r\n            \"mtoOtrosTrib\": 0.00,\r\n            \"mtoDsctoNABI\": 0.00,\r\n            \"mtoCargoNABI\": 0.00,\r\n            \"mtoTotalCP\": 0.00,\r\n            \"mtoValorOpGratuita\": 0.00\r\n        },\r\n        {\r\n            \"codCpe\": \"03\",\r\n            \"cntCP\": 0,\r\n            \"mtoValFactExpo\": 0.00,\r\n            \"mtoBIGravada\": 0.00,\r\n            \"mtoDsctoBI\": 0.00,\r\n            \"mtoIGV\": 0.00,\r\n            \"mtoDsctoIGV\": 0.00,\r\n            \"mtoExonerado\": 0.00,\r\n            \"mtoInafecto\": 0.00,\r\n            \"mtoISC\": 0.00,\r\n            \"mtoIcbp\": 0.00,\r\n            \"mtoOtrosTrib\": 0.00,\r\n            \"mtoDsctoNABI\": 0.00,\r\n            \"mtoCargoNABI\": 0.00,\r\n            \"mtoTotalCP\": 0.00,\r\n            \"mtoValorOpGratuita\": 0.00\r\n        },\r\n        {\r\n            \"codCpe\": \"07\",\r\n            \"cntCP\": 0,\r\n            \"mtoValFactExpo\": 0.00,\r\n            \"mtoBIGravada\": 0.00,\r\n            \"mtoDsctoBI\": 0.00,\r\n            \"mtoIGV\": 0.00,\r\n            \"mtoDsctoIGV\": 0.00,\r\n            \"mtoExonerado\": 0.00,\r\n            \"mtoInafecto\": 0.00,\r\n            \"mtoISC\": 0.00,\r\n            \"mtoIcbp\": 0.00,\r\n            \"mtoOtrosTrib\": 0.00,\r\n            \"mtoDsctoNABI\": 0.00,\r\n            \"mtoCargoNABI\": 0.00,\r\n            \"mtoTotalCP\": 0.00,\r\n            \"mtoValorOpGratuita\": 0.00\r\n        },\r\n        {\r\n            \"codCpe\": \"08\",\r\n            \"cntCP\": 0,\r\n            \"mtoValFactExpo\": 0.00,\r\n            \"mtoBIGravada\": 0.00,\r\n            \"mtoDsctoBI\": 0.00,\r\n            \"mtoIGV\": 0.00,\r\n            \"mtoDsctoIGV\": 0.00,\r\n            \"mtoExonerado\": 0.00,\r\n            \"mtoInafecto\": 0.00,\r\n            \"mtoISC\": 0.00,\r\n            \"mtoIcbp\": 0.00,\r\n            \"mtoOtrosTrib\": 0.00,\r\n            \"mtoDsctoNABI\": 0.00,\r\n            \"mtoCargoNABI\": 0.00,\r\n            \"mtoTotalCP\": 0.00,\r\n            \"mtoValorOpGratuita\": 0.00\r\n        }]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/resumenes-libro/registro",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"resumenes-libro",
+								"registro"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "10_Resumenes-Libro: Acumular",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"codCpe\": \"01\",\r\n    \"mtoValFactExpo\": 0.00,\r\n   \"mtoBIGravada\": 100.00,\r\n   \"mtoDsctoBI\": 0.00,\r\n   \"mtoIGV\": 18.00,\r\n   \"mtoDsctoIGV\": 0.00,\r\n   \"mtoExonerado\": 0.00,\r\n   \"mtoInafecto\": 0.00,\r\n   \"mtoISC\": 0.00,\r\n   \"mtoIcbp\": 0.00,\r\n   \"mtoOtrosTrib\": 0.00,\r\n   \"mtoDsctoNABI\": 0.00,\r\n   \"mtoCargoNABI\": 0.00,\r\n   \"mtoTotalCP\": 118.00,\r\n   \"mtoValorOpGratuita\": 0.00\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/resumenes-libro/20100066603-140400-20210700-0-1/acumular",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"resumenes-libro",
+								"20100066603-140400-20210700-0-1",
+								"acumular"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "11_Resumenes-Libro: Consultar",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "numRuc",
+								"type": "text",
+								"value": "20100066603",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/resumenes-libro/20100066603/20210500",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"resumenes-libro",
+								"20100066603",
+								"20210500"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "11_Resumenes-Libro: Consultar (Pública)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://api-cpe.sunat.gob.pe/v1/contribuyente/migeigv/resumenes-libro/20210700",
+							"protocol": "https",
+							"host": [
+								"api-cpe",
+								"sunat",
+								"gob",
+								"pe"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"migeigv",
+								"resumenes-libro",
+								"20210700"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "09_ Actualizar ResumenLibro (Pública)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"indEstado\": 0, \r\n    \"indPreliminar\": true, \r\n    \"numPreslib\": \"\", \r\n    \"auditoria\": {\r\n        \"codUsuRegis\": \"USR_SUNAT\",\r\n        \"fecRegis\": \"2020-10-04T15:45:55.809Z\",\r\n        \"codUsuModif\": \"MODDATOS\",\r\n        \"fecModif\": \"2021-10-04T15:45:55.809Z\"\r\n    },\r\n    \"lisComprobantes\": [\r\n        {\r\n            \"codCpe\": \"01\",\r\n            \"cntCP\": 1,\r\n            \"mtoValFactExpo\": 0.00,\r\n            \"mtoBIGravada\": 100.00,\r\n            \"mtoDsctoBI\": 0.00,\r\n            \"mtoIGV\": 18.00,\r\n            \"mtoDsctoIGV\": 0.00,\r\n            \"mtoExonerado\": 0.00,\r\n            \"mtoInafecto\": 0.00,\r\n            \"mtoISC\": 0.00,\r\n            \"mtoIcbp\": 0.00,\r\n            \"mtoOtrosTrib\": 0.00,\r\n            \"mtoDsctoNABI\": 0.00,\r\n            \"mtoCargoNABI\": 0.00,\r\n            \"mtoTotalCP\": 118.00,\r\n            \"mtoValorOpGratuita\": 0.00\r\n        }]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api-cpe.sunat.gob.pe/v1/contribuyente/migeigv/resumenes-libro/140400/20210700/0/1",
+							"protocol": "https",
+							"host": [
+								"api-cpe",
+								"sunat",
+								"gob",
+								"pe"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"migeigv",
+								"resumenes-libro",
+								"140400",
+								"20210700",
+								"0",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "09_ Actualizar ResumenLibro numPreslib",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "numRuc",
+								"type": "text",
+								"value": "20100066603"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"numPreslib\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/contribuyente/registro/migeigv/e/resumenes-libro/20100066603/140400/20210500/0/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"registro",
+								"migeigv",
+								"e",
+								"resumenes-libro",
+								"20100066603",
+								"140400",
+								"20210500",
+								"0",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "03_ValidaTxt",
+			"item": [
+				{
+					"name": "01_ValidaTXT (Pública) Diego",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n{\r\n    \"desNombreArchivo\":\"20100066604-CPF-202103-21.txt\",\r\n    \"codLibro\":\"140400\",\r\n    \"valHashArchivo\":\"04E5AC476D0C72153BEC479D322826714521B61A5174D1BE2BBC77EDF66BBB5E\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api-cpe.sunat.gob.pe/v1/contribuyente/migeigv/envios/valida",
+							"protocol": "https",
+							"host": [
+								"api-cpe",
+								"sunat",
+								"gob",
+								"pe"
+							],
+							"path": [
+								"v1",
+								"contribuyente",
+								"migeigv",
+								"envios",
+								"valida"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "06_Backend",
+			"item": []
+		}
+	]
+}
