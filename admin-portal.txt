@@ -16,3 +16,50 @@ https://api-portal-desa.sunat.peru/desa/contribuyente/user/reset/1/1632921776/en
 
 
 
+
+
+Estimados.
+            Intranet se debe autenticar por LDAP.
+
+            Para las otras Capas se debe deben configurar según los endpoints, que se enviaron por SUNAT.
+            Saludos.
+               
+               
+	BASIC AUTHENTICATIONS ENDPOINTS
+	
+DESARROLLO	
+	
+URI	http://sunatti-desa-si.k8s.sunat.peru:32760/v1/tecnologia/seguridad/controlacceso/b0012c82-e52e-41a6-b21e-77a4ebca7072/t/validarclavesol
+
+	
+CALIDAD	
+	
+URI	http://sunatti-test-si.k8s.sunat.peru:32760/v1/tecnologia/seguridad/controlacceso/fb74303a-512c-4c94-8e47-357d8de2018b/t/validarclavesol
+
+	
+PRE-PRODUCCION	
+	
+URI	http://sunatti-test-si.k8s.sunat.peru:32760/v1/tecnologia/seguridad/controlacceso/a91b2bd5-183b-41a7-87e5-39353dd94de4/t/validarclavesol
+
+	
+	
+PRODUCCION - EXTRANET
+	
+SURCO	
+	
+URI	http://sunatti-su.k8s.sunat.peru:32760/v1/tecnologia/seguridad/controlacceso/943aa1d6-1ef1-4fcc-bfe5-dc2fac6913ec/t/validarclave
+
+	
+SAN ISIDRO	
+	
+URI	http://sunatti-si.k8s.sunat.peru:32760/v1/tecnologia/seguridad/controlacceso/943aa1d6-1ef1-4fcc-bfe5-dc2fac6913ec/t/validarclave
+
+	
+PRODUCCION - INTERNET
+	
+SURCO	
+	
+URI	http://sunatti-su.k8s.sunat.peru:32760/v1/tecnologia/seguridad/controlacceso/c7c0e87d-b15d-48f3-b52b-5371736de4c5/t/validarclavesol
+
+	
+SAN ISIDRO	
