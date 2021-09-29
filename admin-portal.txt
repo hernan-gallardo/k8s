@@ -9,8 +9,9 @@ https://api-portal-intranet.sunat.peru/v1/validadevops-intranet/user/reset/1/163
 https://api-portal.sunat.gob.pe/v1/validadevops/user/reset/1/1632764929/bwRHE7DGYNN0Hq01Y88hk_Tl_Qzrqj8T_n8ATDj9Z1E/new/login
 https://api-portal.sunat.gob.pe/v1/validadevops/user/reset/1/1632764929/bwRHE7DGYNN0Hq01Y88hk_Tl_Qzrqj8T_n8ATDj9Z1E/new/login
 
-
-
+https://api-portal-desa.sunat.peru/desa/contribuyente/user/reset/1/1632923183/Q2BcnI_sdN-pOxx4NNuQyJj1MZw926fCEsOA5G-jq5A/new/login
+https://api-portal-extranet.sunat.gob.pe/v1/validadevops-extranet/user/reset/1/1632923120/7ftMZ9nrA1-qA2XpQMasHBAOSMk8c_F2C8thKbahjz4/new/login
+https://api-portal-desa.sunat.peru/desa/contribuyente/user/reset/1/1632921776/enzas0LY34vajni4nudfLmyegljnL5UlENMOaZGI2j4/new/login
 
 
 
