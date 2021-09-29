@@ -14,9 +14,13 @@ https://api-portal-extranet.sunat.gob.pe/v1/validadevops-extranet/user/reset/1/1
 https://api-portal-desa.sunat.peru/desa/contribuyente/user/reset/1/1632921776/enzas0LY34vajni4nudfLmyegljnL5UlENMOaZGI2j4/new/login
 
 
-
-
-
+https://api-portal.sunat.gob.pe/v1/clientessol/user/reset/1/1632937071/j7AjQz1PcRZ4B_5TFqgeRizcG39I6c7wtWBxOhOK9GQ/new/login
+https://api-portal.sunat.gob.pe/v1/contribuyente/user/reset/1/1632937190/IyCa7qEmTndOy9iVqOsynMs3Ag3TD3s1MRjneETkuUA/new/login
+https://api-portal-desa.sunat.peru/desa/clientessol/user/reset/1/1632935077/XVpR92NKCNwHmxDCiZQ00tuRPfWZtawQsRC8Ty6jZgU/new/login
+https://api-portal-test.sunat.peru/test/clientessol/user/reset/1/1632937431/JX2OVtZ5ASVe9WQHVUH0DK4tfAiW9TJ3tNHTMajtlKE/new/login
+https://api-portal-test.sunat.peru/test/contribuyente/user/reset/1/1632937691/EH26xlYFhQ6ZGwwir2llt-Byt7-xmHCa98Z_nMDFQjs/new/login
+https://api-portal-preprod.sunat.peru/preprod/clientessol/user/reset/1/1632937609/QErXbGnDYOLCLhenPqNqHO0VbV9pqpZaooMGLIEh_wE/new/login
+https://api-portal-preprod.sunat.peru/preprod/contribuyente/user/reset/1/1632937857/fez-qxZPdGNjvnw1XE38_j8I1vtaYCa8UIVlFONbeb8/new/login
 
 Estimados.
             Intranet se debe autenticar por LDAP.
